@@ -3,21 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách Strings</title>
+    <title>Chọn Strings</title>
     <script>
-        async function interact(str) {
-            let response = await fetch(`/interact/${str}`);
+        async function submitSelection() {
+            let selected = [];
+            document.querySelectorAll('input[name="strings"]:checked').forEach((checkbox) => {
+                selected.push(checkbox.value);
+            });
+
+            let response = await fetch("/interact/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(selected)
+            });
+
             let data = await response.json();
             alert(data.message);
         }
     </script>
 </head>
 <body>
-    <h1>Danh sách Strings</h1>
-    <ul>
+    <h1>Chọn Strings</h1>
+    <form onsubmit="event.preventDefault(); submitSelection();">
         {% for string in strings %}
-            <li><a href="#" onclick="interact('{{ string }}')">{{ string }}</a></li>
+            <label>
+                <input type="checkbox" name="strings" value="{{ string }}"> {{ string }}
+            </label><br>
         {% endfor %}
-    </ul>
+        <br>
+        <button type="submit">Xác nhận</button>
+    </form>
 </body>
 </html>
